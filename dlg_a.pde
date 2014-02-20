@@ -8,6 +8,7 @@ int fg = 0,
     bg = 255;
 
 float[][] points = new float[37][2];
+float[][] extra_points = new float[1][2];
 
 void setup() {
   size(w + margin, h + margin);
@@ -134,9 +135,9 @@ void setup() {
   points[25][0] = points[24][0] + r; // Z
   points[25][1] = points[22][1];
 
-  points[26][0] = points[23][0] - r; // a
+  points[26][0] = points[23][0] - d; // a
   points[26][1] = points[23][1];
-  points[27][0] = points[26][0] - r; // b
+  points[27][0] = points[23][0] - r; // b
   points[27][1] = points[23][1];
 
   drawPoint(points[24]);
@@ -145,8 +146,81 @@ void setup() {
   drawPoint(points[27]);
 
   drawCircle(points[24], d);
-  drawCircle(points[26], d);
+  drawCircle(points[27], d);
 
+  // we want to find lines tangent to the circles drawn with centers Q, b, and radius r;
+  // these outer tangent lines will have slopes parallel to the slope of the line between
+  // points Q and b
+  float m = (points[16][1] - points[27][1]) / (points[16][0] - points[27][0]);
+
+  float tan_x1_Q = points[16][0] - r*m / sqrt(pow(m, 2) + 1);
+  float tan_y1_Q = (-1/m)*(tan_x1_Q - points[16][0]) + points[16][1];
+  float[] tan_p1_Q = {tan_x1_Q, tan_y1_Q};
+
+  // so equation of first tangent line is
+  //    y - tan_y1_Q = m * (x - tan_x1_Q)
+
+  // these two points and their line precede points c and d; but they are not named, so we name them c_prime and d_prime
+  float[] c_prime = new float[2];
+  c_prime[1] = points[27][1];
+  c_prime[0] = (c_prime[1] - tan_y1_Q) / m + tan_x1_Q;
+  float[] d_prime = new float[2];
+  d_prime[1] = points[16][1];
+  d_prime[0] = (d_prime[1] - tan_y1_Q) / m + tan_x1_Q;
+
+  drawPoint(c_prime);
+  drawPoint(d_prime);
+
+  drawLine(c_prime, d_prime);
+
+  float tan_x2_Q = points[16][0] + r*m / sqrt(pow(m, 2) + 1);
+  float tan_y2_Q = (-1/m)*(tan_x2_Q - points[16][0]) + points[16][1];
+  float[] tan_p2_Q = {tan_x2_Q, tan_y2_Q};
+
+  // so equation of first tangent line is
+  //    y - tan_y2_Q = m * (x - tan_x2_Q)
+  points[28][1] = points[27][1];
+  points[28][0] = (points[28][1] - tan_y2_Q) / m + tan_x2_Q; // c
+  points[29][1] = points[16][1];
+  points[29][0] = (points[29][1] - tan_y2_Q) / m + tan_x2_Q; // d
+
+  drawPoint(points[28]);
+  drawPoint(points[29]);
+
+  // drawLine(points[28], points[29]);
+
+  float m_W_Q = (points[22][1] - points[16][1]) / (points[22][0] - points[16][0]);
+
+  // e is the intersection of the lines c-d and W-Q
+  points[30][0] = (m_W_Q*points[22][0] - m*points[28][0] + points[28][1] - points[22][1]) / (m_W_Q - m); // e
+  points[30][1] = m*(points[30][0] - points[29][0]) + points[29][1];
+
+  drawPoint(points[30]);
+
+  drawLine(points[28], points[30]);
+  drawLine(points[22], points[30]);
+
+  points[31][0] = points[25][0] + r; // f
+  points[31][1] = points[25][1];
+
+  drawPoint(points[31]);
+
+  drawCircle(points[25], d);
+
+  points[32] = bisect(points[24], points[25]); // g
+
+  drawPoint(points[32]);
+
+  drawLine(points[21], points[32]);
+
+  float h_xshift = r / tan(atan(abs((points[21][1]-points[32][1])/(points[21][0]-points[32][0]))) / 2); // horizontal shift from point Z to h; vertshift is just r
+
+  points[33][0] = points[32][0] + h_xshift; // h
+  points[33][1] = points[32][1] - r;
+
+  drawPoint(points[33]);
+
+  drawCircle(points[33], d);
 }
 
 void drawPoint(float[] p) {
