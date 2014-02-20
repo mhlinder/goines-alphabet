@@ -221,6 +221,8 @@ void setup() {
   drawPoint(points[33]);
 
   drawCircle(points[33], d);
+
+  save("A.png");
 }
 
 void drawPoint(float[] p) {
