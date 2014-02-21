@@ -108,30 +108,34 @@ void setup() {
   // points Q and b
   float m = (points[16][1] - points[27][1]) / (points[16][0] - points[27][0]);
 
-  float tan_x1_Q = points[16][0] - r*m / sqrt(pow(m, 2) + 1);
-  float tan_y1_Q = (-1/m)*(tan_x1_Q - points[16][0]) + points[16][1];
-  float[] tan_p1_Q = {tan_x1_Q, tan_y1_Q};
+  float x_tan_Q = points[16][0] - r*m / sqrt(pow(m, 2) + 1);
+  float y_tan_Q = (-1/m)*(x_tan_Q - points[16][0]) + points[16][1];
 
   // so equation of first tangent line is
-  //    y - tan_y1_Q = m * (x - tan_x1_Q)
+  //    y - y_tan_Q = m * (x - x_tan_Q)
 
   // these two points and their line precede points c and d; but they are not named, so we name them c_prime and d_prime
   float[] c_prime = new float[2];
   c_prime[1] = points[27][1];
-  c_prime[0] = (c_prime[1] - tan_y1_Q) / m + tan_x1_Q;
+  c_prime[0] = (c_prime[1] - y_tan_Q) / m + x_tan_Q;
   float[] d_prime = new float[2];
   d_prime[1] = points[16][1];
-  d_prime[0] = (d_prime[1] - tan_y1_Q) / m + tan_x1_Q;
+  d_prime[0] = (d_prime[1] - y_tan_Q) / m + x_tan_Q;
 
   drawPoint(c_prime);
   drawPoint(d_prime);
 
   drawLine(c_prime, d_prime);
 
+  // lower right triangle point (for overall shape)
+  float[] tri_r = lineInt(c_prime, d_prime, points[9], points[13]);
+
+  // inside right leg point
+  float[] leg_r = lineInt(c_prime, d_prime, points[10], points[14]);
+
   // 11. Draw another straight line tangential to PQG and abX, in such a manner that it intersects XD at c and GV at d.
   float tan_x2_Q = points[16][0] + r*m / sqrt(pow(m, 2) + 1);
   float tan_y2_Q = (-1/m)*(tan_x2_Q - points[16][0]) + points[16][1];
-  float[] tan_p2_Q = {tan_x2_Q, tan_y2_Q};
 
   // so equation of first tangent line is
   //    y - tan_y2_Q = m * (x - tan_x2_Q)
@@ -159,13 +163,32 @@ void setup() {
 
   // 16. Draw the straight line Vg.
 
+  // lower left triangle point
+  float[] tri_l = lineInt(points[21], points[32], points[9], points[13]);
+
+  // inside left leg point
+  float[] leg_l = lineInt(points[21], points[32], points[10], points[14]);
+
+  // upper triangle point
+  float[] tri_u = lineInt(points[21], points[32], c_prime, d_prime);
+
   // 17. Using the radius EJ, describe a circle h tangential to Vg and to Zf.
-  // h_xshift = r / tan(theta/2), 
+  // h_xshift = r / tan(theta/2), shifted right from f
   // tan(theta/2) = abs(slope Vg, as Zf is parallel to X axis) / 2 = abs((...)) / 2
-  float h_xshift = r / tan(atan(abs((points[21][1]-points[32][1])/(points[21][0]-points[32][0]))) / 2); // horizontal shift from point Z to h; vertshift is just r
+  float h_xshift = r / tan(atan(abs(m_W_Q)) / 2); // horizontal shift from point Z to h; vertshift is just r
 
   points[33][0] = points[32][0] + h_xshift; // h
   points[33][1] = points[32][1] - r;
+
+  // inside left foot point
+  float[] foot_l = {points[33][0], points[32][1]};
+  
+  // grab the tangent point on the line Vg
+  float dx_g_h = points[33][0] - points[32][0];
+  float x_tan_h = points[32][0] + dx_g_h * cos(atan(abs(m_W_Q)));
+  float y_tan_h = points[32][1] - dx_g_h * sin(atan(abs(m_W_Q)));
+  float[] tan_h = {x_tan_h, y_tan_h};
+
 
   // 18. Describe a circle i on KC tangential to CW and to WQ.
   points[34][0] = points[2][0]; // i
@@ -174,8 +197,9 @@ void setup() {
   // Because CW and WQ will be tangent to our circle, the length CW is the same as the length to the tangent point
   // So we move up the line WQ by the distance CW
   // x_tan = xW + sqrt(CW^2 / (1+m^2)) where CW is distance, m is slope of WQ
-  float x_tan_i = points[22][0] + sqrt(pow(points[22][0] - points[2][0], 2) / (1 + pow(m_W_Q, 2)));
+  float x_tan_i = points[22][0] + sqrt(pow(points[22][0] + points[2][0], 2) / (1 + pow(m_W_Q, 2)));
   float y_tan_i = m_W_Q*(x_tan_i - points[22][0]) + points[22][1];
+  float[] tan_i = {x_tan_i, y_tan_i};
 
   // call the tangent point T
   // for i at point (x0=0, y0), we know the lengths of Ci and Ti are equal, giving us the
@@ -189,23 +213,35 @@ void setup() {
   // 19. Describe a circle j on OD tangential to cD and to Xe.
   float x_tan_j = points[28][0] - sqrt(pow(points[3][0] - points[28][0], 2) / (1 + pow(m, 2)));
   float y_tan_j = m*(x_tan_j - points[28][0]) + points[28][1];
-  float[] p_j = {x_tan_j, y_tan_j};
+  float[] tan_j = {x_tan_j, y_tan_j};
 
-  points[35][0] = points[3][0];
+  points[35][0] = points[3][0]; // j
   points[35][1] = (pow(x_tan_j - points[3][0], 2) + pow(y_tan_j, 2) - pow(points[3][1], 2)) / (2*y_tan_j - 2*points[3][0]);
 
   float r_j = points[3][1] - points[35][1];
 
   // 20. Using a diameter equal to the radius EJ, describe a circle k tangential to H-c-prime and to c-prime-d_prime.
   float k_xshift = r / tan(atan(abs((c_prime[1]-d_prime[1])/(c_prime[0]-d_prime[0]))) / 2); // horizontal shift from point Z to h; vertshift is just r
-  points[36][0] = c_prime[0] - k_xshift;
+  points[36][0] = c_prime[0] - k_xshift; // k
   points[36][1] = c_prime[1] - r;
 
+  // inside right foot point
+  float[] foot_r = {points[36][0], c_prime[1]};
+  
+  // grab the tangent point on the line c_prime-d-prime
+  float dx_g_k = c_prime[0] - points[36][0];
+  float x_tan_k = c_prime[0] - dx_g_k * cos(atan(abs(m)));
+  float y_tan_k = c_prime[1] - dx_g_k * sin(atan(abs(m)));
+  float[] tan_k = {x_tan_k, y_tan_k};
+
   // Draw
+  noStroke();
+  fill(fg);
   for (int i = 0; i < n; i++) {
       drawPoint(points[i]);
   }
 
+  stroke(fg);
   drawLine(points[0], points[1]);
   drawLine(points[0], points[2]);
   drawLine(points[1], points[3]);
@@ -218,6 +254,7 @@ void setup() {
   drawLine(points[22], points[30]);
   drawLine(points[21], points[32]);
 
+  noFill();
   drawCircle(points[9], d);
   drawCircle(points[11], d);
   drawCircle(points[13], d);
@@ -234,25 +271,37 @@ void setup() {
   drawCircle(points[35], 2*r_j);
   drawCircle(points[36], d);
 
+  // Actual letter shape
+  strokeWeight(7);
+  // Outer edges
+  drawLine(tan_i, points[30]);
+  drawLine(tan_j, points[30]);
+  // Inner triangle
+  drawLine(tri_u, tri_l);
+  drawLine(tri_u, tri_r);
+  drawLine(tri_r, tri_l);
+  // Legs
+  drawLine(leg_l, leg_r);
+  drawLine(tan_h, leg_l);
+  drawLine(tan_k, leg_r);
+  // Feet
+  drawLine(points[2], foot_l);
+  drawLine(points[3], foot_r);
+
   save("A.png");
 }
 
 void drawPoint(float[] p) {
-  noStroke();
-  fill(fg);
   float x = p[0];
   float y = p[1];
   ellipse(x, y, 5, 5);
 }
 
 void drawLine(float[] p1, float[] p2) {
-  stroke(fg);
   line(p1[0], p1[1], p2[0], p2[1]);
 }
 
 void drawCircle(float[] p, float d) {
-  stroke(fg);
-  noFill();
   ellipse(p[0], p[1], d, d);
 }
 
