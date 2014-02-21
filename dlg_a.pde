@@ -7,8 +7,8 @@ int w = 480,
 int fg = 0,
     bg = 255;
 
-float[][] points = new float[37][2];
-float[][] extra_points = new float[1][2];
+int n = 37;
+float[][] points = new float[n][2];
 
 void setup() {
   size(w + margin, h + margin);
@@ -18,10 +18,6 @@ void setup() {
   
   fill(fg);
   
-  // TODO:
-  // 1. add loop for points, lines, circle to draw
-  // 2. functions for math?
-
   // 1. Construct first a square ABCD, and bisect AC at E, BD at F, AB at G, and CD at H.
   points[0][0] = 0; // A
   points[0][1] = 0;
@@ -31,33 +27,14 @@ void setup() {
   points[2][1] = h;
   points[3][0] = w; // D
   points[3][1] = h;
-
-  drawPoint(points[0]);
-  drawPoint(points[1]);
-  drawPoint(points[2]);
-  drawPoint(points[3]);
   
-  drawLine(points[0], points[1]);
-  drawLine(points[0], points[2]);
-  drawLine(points[1], points[3]);
-  drawLine(points[2], points[3]);
-
   // 2.  Draw the straight lines EF and GH, thereby establishing a point I at their intersection.
   points[4] = bisect(points[0], points[2]); // E
   points[5] = bisect(points[1], points[3]); // F
   points[6] = bisect(points[0], points[1]); // G
   points[7] = bisect(points[2], points[3]); // H
 
-  drawPoint(points[4]);
-  drawPoint(points[5]);
-  drawPoint(points[6]);
-  drawPoint(points[7]);
-
-  drawLine(points[4], points[5]);
-  drawLine(points[6], points[7]);
-
   points[8] = lineInt(points[4], points[5], points[6], points[7]); // I
-  drawPoint(points[8]);
 
 
   // 3. Using a diameter of one-ninth the distance AB, describe on EC a circle
@@ -91,59 +68,27 @@ void setup() {
   points[18][0] = points[12][0]; // T
   points[18][1] = points[12][1] + r;
 
-  drawPoint(points[9]);
-  drawPoint(points[10]);
-  drawPoint(points[11]);
-  drawPoint(points[12]);
-  drawPoint(points[13]);
-  drawPoint(points[14]);
-  drawPoint(points[15]);
-  drawPoint(points[16]);
-  drawPoint(points[17]);
-  drawPoint(points[18]);
-
-  drawCircle(points[9], d);
-  drawCircle(points[11], d);
-  drawCircle(points[13], d);
-  drawCircle(points[16], d);
-  drawCircle(points[6], d);
-  drawCircle(points[12], d);
 
   // 4. Bisect the intersection of L and M to establish on LM a point U.
   points[19] = bisect(points[11], points[12]); // U
   
-  drawPoint(points[19]);
-
   // 5. Using the radius EJ, describe a circle GRS on RB.
   points[20][0] = points[17][0] + r; // S
   points[20][1] = points[6][1];
 
-  drawPoint(points[20]);
-  
-  drawCircle(points[17], d);
-
   // 6. Bisect the distance GR, thereby establishing a point V on GR.
   points[21] = bisect(points[6], points[17]); // V
 
-  drawPoint(points[21]);
 
   // 7. Draw now the straight lines JN and KO.
-  drawLine(points[9], points[13]);
-  drawLine(points[10], points[14]);
-
   float d_u = distance(points[6], points[19]) * 2;
   float r_u = d_u / 2;
-
-  drawCircle(points[19], d_u);
 
   // 8. From the center U, describe a circle intersecting G, thereby establishing a point W on CH and a point X on HD.
   points[22][0] = points[19][0] - sqrt(pow(r_u,2) - pow(points[2][1] - points[19][1], 2)); // W
   points[22][1] = points[2][1];
   points[23][0] = points[19][0] + sqrt(pow(r_u,2) - pow(points[2][1] - points[19][1], 2)); // X
   points[23][1] = points[2][1];
-
-  drawPoint(points[22]);
-  drawPoint(points[23]);
 
   // 9. Using the radius EJ, describe on WH a circle WYZ, and on HX a circle abX.
   points[24][0] = points[22][0] + r; // Y
@@ -155,14 +100,6 @@ void setup() {
   points[26][1] = points[23][1];
   points[27][0] = points[23][0] - r; // b
   points[27][1] = points[23][1];
-
-  drawPoint(points[24]);
-  drawPoint(points[25]);
-  drawPoint(points[26]);
-  drawPoint(points[27]);
-
-  drawCircle(points[24], d);
-  drawCircle(points[27], d);
 
   // 10. Draw a straight line tangential to PQG and abX, in such a manner that it intersects AP and Ha.
 
@@ -203,13 +140,7 @@ void setup() {
   points[29][1] = points[16][1];
   points[29][0] = (points[29][1] - tan_y2_Q) / m + tan_x2_Q; // d
 
-  drawPoint(points[28]);
-  drawPoint(points[29]);
-
-
   // 12. Draw the straight line WQ, and produce it to e.
-  //
-  // drawLine(points[28], points[29]);
 
   float m_W_Q = (points[22][1] - points[16][1]) / (points[22][0] - points[16][0]);
 
@@ -217,27 +148,16 @@ void setup() {
   points[30][0] = (m_W_Q*points[22][0] - m*points[28][0] + points[28][1] - points[22][1]) / (m_W_Q - m); // e
   points[30][1] = m*(points[30][0] - points[29][0]) + points[29][1];
 
-  drawPoint(points[30]);
-
   // 13. Produce Xd to e.
-  drawLine(points[28], points[30]);
-  drawLine(points[22], points[30]);
 
   // 14. From the center Z, using the radius EJ, describe a circle YZf.
   points[31][0] = points[25][0] + r; // f
   points[31][1] = points[25][1];
 
-  drawPoint(points[31]);
-
-  drawCircle(points[25], d);
-
   // 15. Bisect the intersections of Y and Z to establish a point g on YZ.
   points[32] = bisect(points[24], points[25]); // g
 
-  drawPoint(points[32]);
-
   // 16. Draw the straight line Vg.
-  drawLine(points[21], points[32]);
 
   // 17. Using the radius EJ, describe a circle h tangential to Vg and to Zf.
   // h_xshift = r / tan(theta/2), 
@@ -246,10 +166,6 @@ void setup() {
 
   points[33][0] = points[32][0] + h_xshift; // h
   points[33][1] = points[32][1] - r;
-
-  drawPoint(points[33]);
-
-  drawCircle(points[33], d);
 
   // 18. Describe a circle i on KC tangential to CW and to WQ.
   points[34][0] = points[2][0]; // i
@@ -270,10 +186,6 @@ void setup() {
 
   float r_i = points[2][1] - points[34][1];
 
-  drawPoint(points[34]);
-
-  drawCircle(points[34], 2*r_i);
-
   // 19. Describe a circle j on OD tangential to cD and to Xe.
   float x_tan_j = points[28][0] - sqrt(pow(points[3][0] - points[28][0], 2) / (1 + pow(m, 2)));
   float y_tan_j = m*(x_tan_j - points[28][0]) + points[28][1];
@@ -284,17 +196,42 @@ void setup() {
 
   float r_j = points[3][1] - points[35][1];
 
-  drawPoint(points[35]);
-
-  drawCircle(points[35], 2*r_j);
-
   // 20. Using a diameter equal to the radius EJ, describe a circle k tangential to H-c-prime and to c-prime-d_prime.
   float k_xshift = r / tan(atan(abs((c_prime[1]-d_prime[1])/(c_prime[0]-d_prime[0]))) / 2); // horizontal shift from point Z to h; vertshift is just r
   points[36][0] = c_prime[0] - k_xshift;
   points[36][1] = c_prime[1] - r;
 
-  drawPoint(points[36]);
+  // Draw
+  for (int i = 0; i < n; i++) {
+      drawPoint(points[i]);
+  }
 
+  drawLine(points[0], points[1]);
+  drawLine(points[0], points[2]);
+  drawLine(points[1], points[3]);
+  drawLine(points[2], points[3]);
+  drawLine(points[4], points[5]);
+  drawLine(points[6], points[7]);
+  drawLine(points[9], points[13]);
+  drawLine(points[10], points[14]);
+  drawLine(points[28], points[30]);
+  drawLine(points[22], points[30]);
+  drawLine(points[21], points[32]);
+
+  drawCircle(points[9], d);
+  drawCircle(points[11], d);
+  drawCircle(points[13], d);
+  drawCircle(points[16], d);
+  drawCircle(points[6], d);
+  drawCircle(points[12], d);
+  drawCircle(points[17], d);
+  drawCircle(points[19], d_u);
+  drawCircle(points[24], d);
+  drawCircle(points[27], d);
+  drawCircle(points[25], d);
+  drawCircle(points[33], d);
+  drawCircle(points[34], 2*r_i);
+  drawCircle(points[35], 2*r_j);
   drawCircle(points[36], d);
 
   save("A.png");
