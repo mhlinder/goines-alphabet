@@ -289,7 +289,6 @@ void setup() {
   drawLine(points[3], foot_r);
   
   // Serifs
-  
   // Inside left
   float[] horiz_h = {points[33][0] + r, points[33][1]}; // point on circle h; line h-horiz_h is parallel to x-axis
 
@@ -306,6 +305,22 @@ void setup() {
 
   arc(points[36][0], points[36][1], d, d, 0, HALF_PI);
   arc(points[36][0], points[36][1], d, d, theta_tan_k, 2*PI);
+
+  // Outside left
+  float[] horiz_i = {points[34][0] + r_i, points[34][1]};
+
+  float d_horiz_tan_i = sqrt(pow(horiz_i[0] - tan_i[0], 2) + pow(horiz_i[1] - tan_i[1], 2));
+  float theta_tan_i = 2 * asin((d_horiz_tan_i / 2) / r_i); // angle to tan_i
+
+  arc(points[34][0], points[34][1], 2*r_i, 2*r_i, theta_tan_i, HALF_PI);
+  
+  // Outside right
+  float[] horiz_j = {points[35][0] + r_j, points[35][1]};
+
+  float d_horiz_tan_j = sqrt(pow(horiz_j[0] - tan_j[0], 2) + pow(horiz_j[1] - tan_j[1], 2));
+  float theta_tan_j = 2 * asin((d_horiz_tan_j / 2) / r_j); // angle to tan_j
+
+  arc(points[35][0], points[35][1], 2*r_j, 2*r_j, HALF_PI, theta_tan_j);
 
   save("A.png");
 }
