@@ -270,7 +270,7 @@ void setup() {
   drawCircle(points[34], 2*r_i);
   drawCircle(points[35], 2*r_j);
   drawCircle(points[36], d);
-
+  
   // Actual letter shape
   strokeWeight(7);
   // Outer edges
@@ -287,6 +287,25 @@ void setup() {
   // Feet
   drawLine(points[2], foot_l);
   drawLine(points[3], foot_r);
+  
+  // Serifs
+  
+  // Inside left
+  float[] horiz_h = {points[33][0] + r, points[33][1]}; // point on circle h; line h-horiz_h is parallel to x-axis
+
+  float d_horiz_tan_h = sqrt(pow(horiz_h[0] - tan_h[0], 2) + pow(horiz_h[1] - tan_h[1], 2));
+  float theta_tan_h = 2*PI - 2 * asin((d_horiz_tan_h / 2) / r); // angle to tan_h
+
+  arc(points[33][0], points[33][1], d, d, HALF_PI, theta_tan_h);
+
+  // Inside right
+  float[] horiz_k = {points[36][0] + r, points[36][1]};
+  
+  float d_horiz_tan_k = sqrt(pow(horiz_k[0] - tan_k[0], 2) + pow(horiz_k[1] - tan_k[1], 2));
+  float theta_tan_k = 2*PI - 2 * asin((d_horiz_tan_k / 2) / r); // angle to tan_k
+
+  arc(points[36][0], points[36][1], d, d, 0, HALF_PI);
+  arc(points[36][0], points[36][1], d, d, theta_tan_k, 2*PI);
 
   save("A.png");
 }
