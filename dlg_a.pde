@@ -322,6 +322,33 @@ void setup() {
 
   arc(points[35][0], points[35][1], 2*r_j, 2*r_j, HALF_PI, theta_tan_j);
 
+  save("A_geo.png");
+
+  // just draw letter
+  background(bg);
+  strokeWeight(7);
+
+  // Outer edges
+  drawLine(tan_i, points[30]);
+  drawLine(tan_j, points[30]);
+  // Inner triangle
+  drawLine(tri_u, tri_l);
+  drawLine(tri_u, tri_r);
+  drawLine(tri_r, tri_l);
+  // Legs
+  drawLine(leg_l, leg_r);
+  drawLine(tan_h, leg_l);
+  drawLine(tan_k, leg_r);
+  // Feet
+  drawLine(points[2], foot_l);
+  drawLine(points[3], foot_r);
+  // Serifs
+  arc(points[33][0], points[33][1], d, d, HALF_PI, theta_tan_h);
+  arc(points[36][0], points[36][1], d, d, 0, HALF_PI);
+  arc(points[36][0], points[36][1], d, d, theta_tan_k, 2*PI);
+  arc(points[34][0], points[34][1], 2*r_i, 2*r_i, theta_tan_i, HALF_PI);
+  arc(points[35][0], points[35][1], 2*r_j, 2*r_j, HALF_PI, theta_tan_j);
+
   save("A.png");
 }
 
