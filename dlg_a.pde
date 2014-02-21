@@ -288,7 +288,15 @@ void setup() {
 
   drawCircle(points[35], 2*r_j);
 
-  // 20. Using a diameter equal to the radius EJ, describe a circle k tangential to Ha and to Pa.
+  // 20. Using a diameter equal to the radius EJ, describe a circle k tangential to H-c-prime and to c-prime-d_prime.
+  float k_xshift = r / tan(atan(abs((c_prime[1]-d_prime[1])/(c_prime[0]-d_prime[0]))) / 2); // horizontal shift from point Z to h; vertshift is just r
+  points[36][0] = c_prime[0] - k_xshift;
+  points[36][1] = c_prime[1] - r;
+
+  drawPoint(points[36]);
+
+  drawCircle(points[36], d);
+
   save("A.png");
 }
 
