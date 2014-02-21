@@ -252,13 +252,42 @@ void setup() {
   drawCircle(points[33], d);
 
   // 18. Describe a circle i on KC tangential to CW and to WQ.
+  points[34][0] = points[2][0]; // i
 
+  // x_tan is the x-coordinate of the tangent point on WQ and the circle we are constructing with center i.
+  // Because CW and WQ will be tangent to our circle, the length CW is the same as the length to the tangent point
+  // So we move up the line WQ by the distance CW
+  // x_tan = xW + sqrt(CW^2 / (1+m^2)) where CW is distance, m is slope of WQ
+  float x_tan_i = points[22][0] + sqrt(pow(points[22][0] - points[2][0], 2) / (1 + pow(m_W_Q, 2)));
+  float y_tan_i = m_W_Q*(x_tan_i - points[22][0]) + points[22][1];
+
+  // call the tangent point T
   // for i at point (x0=0, y0), we know the lengths of Ci and Ti are equal, giving us the
   // equation is y0:
   //    (yc-y0)^2 = xT^2 + (yT-y0)^2
   // which simplifies to:
+  points[34][1] = (pow(x_tan_i, 2) + pow(y_tan_i, 2) - pow(points[2][1], 2) ) / (2*y_tan_i - 2*points[2][1]);
 
-  // 19. Describe a circle j on OD tangential to XD and to Xe.
+  float r_i = points[2][1] - points[34][1];
+
+  drawPoint(points[34]);
+
+  drawCircle(points[34], 2*r_i);
+
+  // 19. Describe a circle j on OD tangential to cD and to Xe.
+  float x_tan_j = points[28][0] - sqrt(pow(points[3][0] - points[28][0], 2) / (1 + pow(m, 2)));
+  float y_tan_j = m*(x_tan_j - points[28][0]) + points[28][1];
+  float[] p_j = {x_tan_j, y_tan_j};
+
+  points[35][0] = points[3][0];
+  points[35][1] = (pow(x_tan_j - points[3][0], 2) + pow(y_tan_j, 2) - pow(points[3][1], 2)) / (2*y_tan_j - 2*points[3][0]);
+
+  float r_j = points[3][1] - points[35][1];
+
+  drawPoint(points[35]);
+
+  drawCircle(points[35], 2*r_j);
+
   // 20. Using a diameter equal to the radius EJ, describe a circle k tangential to Ha and to Pa.
   save("A.png");
 }
